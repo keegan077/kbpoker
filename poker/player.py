@@ -27,9 +27,16 @@ class Player:
         self._pocket_cards.clear()
         self._pocket_cards.extend(cards)
 
-    class Action(Enum):
+
+class PlayerAction:
+
+    class ActionType:
         CHECKFOLD = 1
         FOLD = 2
         CHECK = 3
         SEE = 4
         RAISE = 5
+
+    def __init__(self):
+        self.action: PlayerAction.ActionType = PlayerAction.ActionType.CHECKFOLD
+        self.value: int = 0
