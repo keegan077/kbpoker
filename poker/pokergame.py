@@ -1,4 +1,5 @@
 from typing import Optional, Union, Tuple, List, Dict, Any, NoReturn
+from enum import Enum
 from itertools import cycle
 from poker import Player
 from cards import Deck, Card
@@ -15,25 +16,15 @@ class PokerGame:
                               "constant",
                               "manual")
 
-    # codes for possible game states
-    GAME_STATES = ("pending",
-                   "pre-flop",
-                   "flop",
-                   "turn",
-                   "river",
-                   "showdown",
-                   "post-showdown",
-                   "finished")
-
     def __init__(self):
         """
         Creates a PokerGame object, in a pending state, waiting for players to join.
         """
-        self._game_state:       str = "pending"
+        self._game_state:       PokerGame.GameState = PokerGame.GameState.INITIALISING
         self._round:            int = 0
 
         # all players
-        self._players: List[Optional[Player], ...] = []
+        self._players: Dict[] = {}
 
         # key players
         self._player: Dict[str, Optional[Player]] = {
@@ -171,3 +162,9 @@ class PokerGame:
 
     class BeginGameException(BaseException):
         pass
+
+    class GameState(Enum):
+        INITIALISING = 1
+        WAITING_FOR_PLAYERS = 2
+        WAITING_FOR_PLAYER_ACTION = 3
+        RUNNING = 4
