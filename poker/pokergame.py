@@ -37,14 +37,14 @@ class PokerGame:
         self._ccards_visible:   List[Card] = []
         self._pot:              int = 0
 
-    def add_player(self, player_id: str, player_name: str):
+    def add_player(self, player_id: str, player_name: str) -> NoReturn:
         """
         Adds a player to our game.
         """
-        assert player_id not in self._players
+        assert player_id not in self._players, "Player with player id {} already exists".format(player_id)
         self._players[player_id] = Player(player_name, player_id)
 
-    def remove_player(self, player_id: str):
+    def remove_player(self, player_id: str) -> NoReturn:
         """
         Removes the given player from the room, and also from the table if he is sitting there
         """
@@ -52,6 +52,41 @@ class PokerGame:
         self._players.pop(player_id)
         if player_id in self._table:
             self._table.remove(player_id)
+
+    def get_player(self, player_id: str) -> Player:
+        """
+        Returns the player based on the player id.
+        """
+        assert player_id in self._players
+        return self._players[player_id]
+
+    @property
+    def all_player_ids(self) -> Tuple:
+        """
+        List of players at table and in the spectating area
+        """
+        return tuple(player for player in self._players)
+
+    def table_player_ids(self) -> Tuple:
+        """
+        Returns all players at the table
+        """
+        return tuple(player_id for player_id in self._table if player_id is not None)
+
+    def player_to_left(self, player_id: str = None) -> Optional[Player]:
+        """
+        Returns the player to the left of the argument player, or the player to the left of the last returned player if
+        no argument player is given.
+        """
+        last_seat_index = 0
+
+        while True:
+            if len([_ for _ in self._table if _ is not None]) == 0:
+                yield None
+            else:
+                while self._table[last_seat_index] is None:
+                    last_seat_index = (last_seat_index + 1) % len(self._table)
+                yield self._table[last_seat_index]
 
     def begin_game(self, game_args: Dict[str, Any]):
         """
